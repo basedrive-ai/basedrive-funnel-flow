@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# gftools builder output. sources/config_display.yaml writes to ../fonts/Basedrive_Funnel_Flow.
+# The released files are the ones in variable/, ttf/, otf/ and webfonts/. A plain rebuild leaves
+# out the gvar delta-pinning step (see README.md), so its output is not a substitute.
+fonts/
+sources/build.ninja
+sources/.ninja_log
+sources/instance_ufos/
+sources/master_ufo/
+*.ufo/
+*.designspace
+
+# Glyphs app backups and autosaves
+*.glyphs.bak
+*(Autosaved)*
+
+# Editors
+.vscode/
+.idea/
+*.swp

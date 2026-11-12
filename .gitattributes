@@ -1,0 +1,11 @@
+# Text files keep LF line endings on every platform.
+* text=auto eol=lf
+
+# Font binaries: never convert line endings and never try to text-diff them.
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+# The Glyphs source is plain text: keep it diffable.
+*.glyphs text eol=lf

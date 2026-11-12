@@ -44,12 +44,13 @@ main{display:grid;place-items:center;padding:28px;min-width:0;overflow:hidden}
 #text{font-family:"BFF",sans-serif;font-weight:var(--wght);font-size:calc(var(--size) * 1cqw);letter-spacing:calc(var(--track) * .01em);line-height:calc(var(--lh) * .01);padding:0 calc(var(--pad) * 1cqw);text-align:var(--align);outline:none;white-space:pre-wrap;overflow-wrap:break-word}
 #logo{position:absolute;left:calc(var(--pad) * 1cqw);top:calc(var(--pad) * .75cqw);height:3.4cqw;display:flex;align-items:baseline;gap:1.05cqw;font-family:"BFF",sans-serif;font-weight:500;font-size:4.2cqw;line-height:1;letter-spacing:-.03em}
 #logo svg{height:3.4cqw;align-self:flex-end;flex:none}
+#sub{font-family:"BFF",sans-serif;font-weight:300;font-size:calc(var(--size) * .98cqw);letter-spacing:calc(var(--track) * .01em);line-height:calc(var(--lh) * .01);margin-top:calc(var(--size) * .55cqw);padding:0 calc(var(--pad) * 1cqw);text-align:var(--align);outline:none;white-space:pre-wrap;overflow-wrap:break-word}
 #foot{position:absolute;left:calc(var(--pad) * 1cqw);right:calc(var(--pad) * 1cqw);bottom:calc(var(--pad) * .75cqw);font-family:"BFF",sans-serif;font-weight:400;font-size:1.5cqw;opacity:.75;outline:none}
 #samples{border-right:0;border-left:1px solid #2a3133}
 #samples button{display:block;width:100%;margin-top:6px;padding:6px 8px;text-align:left;background:#1b1f20;color:#dfe5e5;border:1px solid #2a3133;border-radius:4px;cursor:pointer;font:inherit}
 #samples button small{display:block;color:#93a1a3;font-size:11px}
 #samples button.on{border-color:#2096A7}
-#stage.orig #text{font-family:"FD",sans-serif}
+#stage.orig #text,#stage.orig #sub{font-family:"FD",sans-serif}
 [hidden]{display:none!important}
 </style>
 <aside>
@@ -80,6 +81,7 @@ main{display:grid;place-items:center;padding:28px;min-width:0;overflow:hidden}
   <button class="wide" id="swap">Swap text and background</button>
   <label>Extras</label>
   <div class="row"><button id="t-logo">Logo</button><button id="t-foot">Footer line</button></div>
+  <button class="wide" id="t-sub" style="margin-top:6px" title="A second, lighter line below the main text">Second line</button>
 
   <h2>Export</h2>
   <label>Resolution</label>
@@ -95,6 +97,7 @@ main{display:grid;place-items:center;padding:28px;min-width:0;overflow:hidden}
   <div id="stage">
     <div id="logo" hidden><svg viewBox="0 0 53.027 57.2" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M11.768 0H42.103A10.924 10.924 0 0 1 53.027 10.924C53.027 17.676 48.855 21.848 48.855 28.600C48.855 35.352 53.027 39.524 53.027 46.276A10.924 10.924 0 0 1 42.103 57.200H11.768L0.000 45.432L4.912 28.600L0.000 11.768ZM11.768 10.924H35.352A6.752 6.752 0 0 1 42.103 17.676V39.524A6.752 6.752 0 0 1 35.352 46.276H11.768L16.926 28.600Z"/></svg><span>basedrive</span></div>
     <div id="text" spellcheck="false" aria-label="Editable sample text"></div>
+    <div id="sub" spellcheck="false" aria-label="Editable second line" hidden>Meet basedrive</div>
     <div id="foot" spellcheck="false" aria-label="Editable footer line" hidden>Basedrive Funnel Flow: six weights, one variable font.</div>
   </div>
 </main>
@@ -109,12 +112,12 @@ const PALETTE = {'Lagoon teal':'#025F6B','Night teal':'#001A1F','Lagoon bright':
   'Red':'#EF4444','Orange':'#F97316','Amber':'#F59E0B','Yellow':'#FACC15','Green':'#22C55E','Emerald':'#059669','Sky':'#0EA5E9',
   'Blue':'#2563EB','Indigo':'#4F46E5','Purple':'#9333EA','Magenta':'#C026D3','Pink':'#EC4899','Rose':'#FDA4AF','Mint':'#A7F3D0'};
 const DIMS = [1800, 1200];   // PNG size at 1×. The stage is 3 : 2.
-// A string starts a group. A sample is [name, text, size, weight, line height %, ramp].
+// A string starts a group. A sample is [name, text, size, weight, line height %, ramp, second line].
 // With ramp set, each line gets its own weight, from Light on the first line to ExtraBold on the last.
 // Samples never change the letter spacing. They do set the colours: see LOOKS.
 const SAMPLES = [
   'Basedrive',
-  ['Hero headline', 'Unify your customers, work and business operations on one base.', 5.4, 600, 110],
+  ['Hero headline', 'Unify your customers, work and business operations on one base.', 5.4, 600, 110, false, 'Meet basedrive'],
   ['Big number', '1,284,907\nrows synced today', 9.5, 600, 100],
   ['Dashboard', 'Revenue  $48,200\nOrders  1,306\nRefunds  0.8%', 7.5, 500, 125],
   ['Pricing', 'Pro plan\n$29 / month', 11, 600, 105],
@@ -152,16 +155,16 @@ const LOOKS = {
   'Recipe paragraph':['#FEF3C7','#1F2937'], 'Insurance small print':['#FFFFFF','#334155'],
 };
 const WEIGHTS = {300:'Light',400:'Regular',500:'Medium',600:'SemiBold',700:'Bold',800:'ExtraBold'};
-const $ = id => document.getElementById(id), root = document.documentElement, stage = $('stage'), text = $('text'), foot = $('foot');
+const $ = id => document.getElementById(id), root = document.documentElement, stage = $('stage'), text = $('text'), foot = $('foot'), sub = $('sub');
 const DEFAULTS = {wght:'500', size:'5.4', track:'-2', lh:'110', pad:'6', align:'left', valign:'center', bg:'#025F6B', fg:'#FFFFFF',
-  logo:false, foot:false, ramp:false, text:'Unify your customers, work and business operations on one base.', footText:foot.textContent, scale:'1', transparent:false};
+  logo:false, foot:false, ramp:false, text:'Unify your customers, work and business operations on one base.', footText:foot.textContent, sub:true, subText:sub.textContent, scale:'1', transparent:false};
 const state = {...DEFAULTS};
 try {
-  const saved = JSON.parse(localStorage.getItem('bff-editor-4') || '{}');
+  const saved = JSON.parse(localStorage.getItem('bff-editor-5') || '{}');
   for (const k of Object.keys(DEFAULTS)) if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) state[k] = saved[k];
   for (const k of ['bg','fg']) if (!/^#[0-9a-f]{6}$/i.test(state[k])) state[k] = DEFAULTS[k];
 } catch (e) {}
-const save = () => { try { localStorage.setItem('bff-editor-4', JSON.stringify(state)); } catch (e) {} };
+const save = () => { try { localStorage.setItem('bff-editor-5', JSON.stringify(state)); } catch (e) {} };
 const dims = () => DIMS;
 
 function flash(msg, ok = true) { const s = $('status'); s.textContent = msg; s.style.color = ok ? '#2096A7' : '#F76D57'; }
@@ -202,6 +205,7 @@ function apply() {
   $('t-ramp').classList.toggle('on', state.ramp);
   $('logo').hidden = !state.logo; $('t-logo').classList.toggle('on', state.logo);
   foot.hidden = !state.foot; $('t-foot').classList.toggle('on', state.foot);
+  sub.hidden = !state.sub; $('t-sub').classList.toggle('on', state.sub);
   $('transparent').checked = state.transparent;
   const s = Number(state.scale);
   $('dl').textContent = `Download PNG · ${W * s}×${H * s}`;
@@ -212,7 +216,8 @@ function apply() {
 // Warn when the text runs past the edges of the image, where it would be cut off.
 function checkFit() {
   const s = stage.getBoundingClientRect(), t = text.getBoundingClientRect();
-  const clipped = t.top < s.top - 1 || t.bottom > s.bottom + 1 || text.scrollWidth > text.clientWidth + 1;
+  const bottom = state.sub ? sub.getBoundingClientRect().bottom : t.bottom;
+  const clipped = t.top < s.top - 1 || bottom > s.bottom + 1 || text.scrollWidth > text.clientWidth + 1;
   $('warn').hidden = !clipped;
   $('warn').textContent = clipped ? 'The text is cut off at the edges. Make it smaller or shorter.' : '';
 }
@@ -220,11 +225,11 @@ function checkFit() {
 // ---- controls ----
 for (const smp of SAMPLES) {
   if (typeof smp === 'string') { const h = document.createElement('h2'); h.textContent = smp; $('samples').append(h); continue; }
-  const [name, txt, size, wght, lh, ramp = false] = smp;
+  const [name, txt, size, wght, lh, ramp = false, second = ''] = smp;
   const b = document.createElement('button'); b.dataset.text = txt;
   b.innerHTML = `${name}<small>${ramp ? 'Light to ExtraBold' : WEIGHTS[wght]} · size ${size}</small>`;
   const [bg, fg] = LOOKS[name] || ['#025F6B', '#FFFFFF'];
-  b.addEventListener('click', () => { Object.assign(state, {text: txt, size: String(size), wght: String(wght), lh: String(lh), ramp, bg, fg}); setText(); apply(); });
+  b.addEventListener('click', () => { Object.assign(state, {text: txt, size: String(size), wght: String(wght), lh: String(lh), ramp, bg, fg, sub: !!second}); if (second) { state.subText = second; sub.textContent = second; } setText(); apply(); });
   $('samples').append(b);
 }
 for (const [w, n] of Object.entries(WEIGHTS)) { const b = document.createElement('button'); b.dataset.v = w; b.textContent = w; b.title = n; $('named').append(b); }
@@ -252,11 +257,12 @@ $('t-orig').addEventListener('click', async () => {
 });
 $('t-logo').addEventListener('click', () => { state.logo = !state.logo; apply(); });
 $('t-foot').addEventListener('click', () => { state.foot = !state.foot; apply(); });
+$('t-sub').addEventListener('click', () => { state.sub = !state.sub; apply(); });
 $('transparent').addEventListener('change', e => { state.transparent = e.target.checked; apply(); });
 $('swap').addEventListener('click', () => { [state.bg, state.fg] = [state.fg, state.bg]; apply(); });
 $('reset').addEventListener('click', () => {
   if (!confirm('Reset all settings and text to the defaults?')) return;
-  Object.assign(state, DEFAULTS); setText(); foot.textContent = state.footText; apply(); flash('Reset to the defaults.');
+  Object.assign(state, DEFAULTS); setText(); foot.textContent = state.footText; sub.textContent = state.subText; apply(); flash('Reset to the defaults.');
 });
 for (const k of ['bg','fg']) {
   for (const [name, hex] of Object.entries(PALETTE)) {
@@ -278,16 +284,17 @@ for (const k of ['bg','fg']) {
   h.addEventListener('blur', apply);
   row.append(c, h); $(k).append(row);
 }
-for (const el of [text, foot]) {
+for (const el of [text, foot, sub]) {
   try { el.contentEditable = 'plaintext-only'; } catch (e) {}
   if (el.contentEditable !== 'plaintext-only') {
     el.contentEditable = 'true';
     el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); });
   }
 }
-setText(); foot.textContent = state.footText;
+setText(); foot.textContent = state.footText; sub.textContent = state.subText;
 text.addEventListener('input', () => { state.text = text.innerText.replace(/\n$/, ''); apply(); });
 foot.addEventListener('input', () => { state.footText = foot.innerText.trim(); save(); });
+sub.addEventListener('input', () => { state.subText = sub.innerText.trim(); save(); checkFit(); });
 addEventListener('resize', () => requestAnimationFrame(checkFit));
 
 // ---- export ----
@@ -313,7 +320,7 @@ function textLines(el) {
 function drawText(ctx, el, origin, k) {
   const cs = getComputedStyle(el), size = parseFloat(cs.fontSize), ls = (parseFloat(cs.letterSpacing) || 0) * k;
   ctx.save();
-  ctx.globalAlpha = parseFloat(getComputedStyle(el.closest('#foot,#logo,#text')).opacity) || 1;
+  ctx.globalAlpha = parseFloat(getComputedStyle(el.closest('#foot,#logo,#text,#sub')).opacity) || 1;
   ctx.fillStyle = cs.color;
   ctx.font = `${cs.fontWeight} ${size * k}px ${cs.fontFamily}`;
   ctx.textBaseline = 'alphabetic';
@@ -343,6 +350,7 @@ async function render() {
     drawText(ctx, $('logo').querySelector('span'), origin, k);
   }
   drawText(ctx, text, origin, k);
+  if (state.sub) drawText(ctx, sub, origin, k);
   if (state.foot) drawText(ctx, foot, origin, k);
   return cv;
 }

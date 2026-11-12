@@ -28,3 +28,6 @@ sources/master_ufo/
 .vscode/
 .idea/
 *.swp
+
+# Release zips built locally
+dist/

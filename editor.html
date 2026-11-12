@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Basedrive Funnel Flow editor</title>
+<!-- Open this file from the repo folder (it loads the font from webfonts/ next to it), type in the coloured
+     area, then download it as a PNG at 1800×1200. No build step, no dependencies. -->
+<style>
+@font-face{font-family:"BFF";src:url("webfonts/BasedriveFunnelFlow%5Bwght%5D.woff2") format("woff2"),url("variable/BasedriveFunnelFlow%5Bwght%5D.ttf") format("truetype");font-weight:300 800;font-display:block}
+/* The original Funnel Display 1.001, for the compare button. Loaded from the upstream repository only when asked for. */
+@font-face{font-family:"FD";src:url("https://raw.githubusercontent.com/Dicotype/Funnel/5f3a46a76b89b91e47d9c191042c91d73b7479c9/fonts/Funnel_Display/variable/FunnelDisplay%5Bwght%5D.ttf") format("truetype");font-weight:300 800;font-display:block}
+:root{--bg:#025F6B;--fg:#FFFFFF;--wght:500;--size:5.4;--track:-2;--lh:110;--pad:6;--ar:1.5;--align:left;--valign:center}
+*{box-sizing:border-box}
+body{margin:0;display:grid;grid-template-columns:264px 1fr 236px;height:100vh;font:13px/1.4 system-ui,sans-serif;background:#1b1f20;color:#dfe5e5}
+aside{overflow:auto;padding:14px 14px 20px;background:#111516;border-right:1px solid #2a3133}
+aside h1{font-size:14px;margin:0 0 2px}
+aside p{margin:0 0 12px;color:#93a1a3;font-size:12px}
+aside a{color:#2096A7}
+aside h2{margin:20px 0 0;padding-top:12px;border-top:1px solid #2a3133;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#dfe5e5}
+label{display:block;margin:12px 0 4px;color:#93a1a3;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+label output{float:right;color:#dfe5e5;letter-spacing:0;text-transform:none}
+label.check{display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-size:12px;color:#dfe5e5;cursor:pointer}
+select,input[type=range]{width:100%}
+select{background:#1b1f20;color:#dfe5e5;border:1px solid #2a3133;border-radius:4px;padding:5px}
+.sw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sw button{width:24px;height:24px;border-radius:50%;border:1px solid #556;cursor:pointer;padding:0}
+.sw button.on{outline:2px solid #2096A7;outline-offset:2px}
+.sw .custom{flex-basis:100%;display:flex;gap:6px;align-items:center;margin-top:2px}
+.sw input[type=color]{width:56px;height:28px;padding:0;border:0;background:none;cursor:pointer}
+.sw .hex{flex:1;min-width:0;background:#1b1f20;color:#dfe5e5;border:1px solid #2a3133;border-radius:4px;padding:5px 6px;font:12px ui-monospace,Menlo,monospace}
+.sw .hex.bad{border-color:#F76D57}
+.row{display:flex;gap:6px}
+.row button,.wide{flex:1;background:#1b1f20;color:#dfe5e5;border:1px solid #2a3133;border-radius:4px;padding:5px;cursor:pointer;font:inherit}
+.row button.on,.wide.on{border-color:#2096A7;color:#fff}
+.wide{display:block;width:100%;margin-top:8px}
+.primary{background:#2096A7;border-color:#2096A7;color:#fff;font-weight:600;padding:8px}
+.primary:hover{background:#1b8494}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #CBEF63;outline-offset:1px}
+.hint{margin:6px 0 0;color:#6f7d7f;font-size:11px}
+#status{margin-top:8px;font-size:12px;min-height:1.4em}
+#warn{margin:0 0 4px;padding:6px 8px;border-radius:4px;font-size:12px;color:#1b1f20;background:#F7B657}
+main{display:grid;place-items:center;padding:28px;min-width:0;overflow:hidden}
+#stage{container-type:inline-size;width:min(100%,calc((100vh - 56px) * var(--ar)));aspect-ratio:var(--ar);background:var(--bg);color:var(--fg);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:var(--valign)}
+#text{font-family:"BFF",sans-serif;font-weight:var(--wght);font-size:calc(var(--size) * 1cqw);letter-spacing:calc(var(--track) * .01em);line-height:calc(var(--lh) * .01);padding:0 calc(var(--pad) * 1cqw);text-align:var(--align);outline:none;white-space:pre-wrap;overflow-wrap:break-word}
+#logo{position:absolute;left:calc(var(--pad) * 1cqw);top:calc(var(--pad) * .75cqw);height:3.4cqw;display:flex;align-items:baseline;gap:1.05cqw;font-family:"BFF",sans-serif;font-weight:500;font-size:4.2cqw;line-height:1;letter-spacing:-.03em}
+#logo svg{height:3.4cqw;align-self:flex-end;flex:none}
+#foot{position:absolute;left:calc(var(--pad) * 1cqw);right:calc(var(--pad) * 1cqw);bottom:calc(var(--pad) * .75cqw);font-family:"BFF",sans-serif;font-weight:400;font-size:1.5cqw;opacity:.75;outline:none}
+#samples{border-right:0;border-left:1px solid #2a3133}
+#samples button{display:block;width:100%;margin-top:6px;padding:6px 8px;text-align:left;background:#1b1f20;color:#dfe5e5;border:1px solid #2a3133;border-radius:4px;cursor:pointer;font:inherit}
+#samples button small{display:block;color:#93a1a3;font-size:11px}
+#samples button.on{border-color:#2096A7}
+#stage.orig #text{font-family:"FD",sans-serif}
+[hidden]{display:none!important}
+</style>
+<aside>
+  <h1>Basedrive Funnel Flow</h1>
+  <p style="margin-bottom:6px">from: <a href="https://basedrive.ai" target="_blank" rel="noopener">basedrive.ai</a></p>
+  <p>Type in the coloured area, then download it as a PNG.</p>
+  <div id="warn" role="alert" hidden></div>
+  <button class="wide" id="t-orig" style="margin-top:0" title="Switch the text between this font and the original Funnel Display to see what changed. Needs an internet connection.">Compare: show original Funnel Display</button>
+  <label for="wght">Weight <output id="o-wght"></output></label>
+  <input type="range" id="wght" min="300" max="800" step="1" title="Double-click to reset">
+  <div class="row" id="named" style="margin-top:6px"></div>
+  <button class="wide" id="t-ramp" title="Each line gets its own weight, from Light on the first line to ExtraBold on the last">Ramp weight line by line</button>
+  <label for="size">Size <output id="o-size"></output></label>
+  <input type="range" id="size" min="2" max="40" step="0.1" title="Double-click to reset">
+  <label for="track">Letter spacing % <output id="o-track"></output></label>
+  <input type="range" id="track" min="-6" max="6" step="0.5" title="Double-click to reset">
+  <label for="lh">Line height % <output id="o-lh"></output></label>
+  <input type="range" id="lh" min="80" max="150" step="1" title="Double-click to reset">
+  <label for="pad">Margin <output id="o-pad"></output></label>
+  <input type="range" id="pad" min="2" max="14" step="0.5" title="Double-click to reset">
+  <label>Align</label>
+  <div class="row" id="align"><button data-v="left">Left</button><button data-v="center">Centre</button><button data-v="right">Right</button></div>
+  <div class="row" id="valign" style="margin-top:6px"><button data-v="flex-start">Top</button><button data-v="center">Middle</button><button data-v="flex-end">Bottom</button></div>
+  <label>Background</label>
+  <div class="sw" id="bg"></div>
+  <label>Text <output id="contrast"></output></label>
+  <div class="sw" id="fg"></div>
+  <button class="wide" id="swap">Swap text and background</button>
+  <label>Extras</label>
+  <div class="row"><button id="t-logo">Logo</button><button id="t-foot">Footer line</button></div>
+
+  <h2>Export</h2>
+  <label>Resolution</label>
+  <div class="row" id="scale"><button data-v="1">1×</button><button data-v="2">2× (sharper)</button></div>
+  <label class="check"><input type="checkbox" id="transparent"> Transparent background (text only)</label>
+  <button class="wide primary" id="dl">Download PNG</button>
+  <div class="row" style="margin-top:6px"><button id="copy-img">Copy image</button><button id="copy-css">Copy CSS</button></div>
+  <p class="hint">Shortcut: ⌘S or Ctrl+S downloads the PNG.</p>
+  <div id="status" role="status"></div>
+  <button class="wide" id="reset">Reset everything</button>
+</aside>
+<main>
+  <div id="stage">
+    <div id="logo" hidden><svg viewBox="0 0 53.027 57.2" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M11.768 0H42.103A10.924 10.924 0 0 1 53.027 10.924C53.027 17.676 48.855 21.848 48.855 28.600C48.855 35.352 53.027 39.524 53.027 46.276A10.924 10.924 0 0 1 42.103 57.200H11.768L0.000 45.432L4.912 28.600L0.000 11.768ZM11.768 10.924H35.352A6.752 6.752 0 0 1 42.103 17.676V39.524A6.752 6.752 0 0 1 35.352 46.276H11.768L16.926 28.600Z"/></svg><span>basedrive</span></div>
+    <div id="text" spellcheck="false" aria-label="Editable sample text"></div>
+    <div id="foot" spellcheck="false" aria-label="Editable footer line" hidden>Basedrive Funnel Flow: six weights, one variable font.</div>
+  </div>
+</main>
+<aside id="samples">
+  <h1>Samples</h1>
+  <p>Click one to load it, then edit freely.</p>
+</aside>
+<script>
+// Brand colours first (one row), then common colours to try quickly.
+const PALETTE = {'Lagoon teal':'#025F6B','Night teal':'#001A1F','Lagoon bright':'#2096A7','Lime':'#CBEF63','Paper':'#F8F8F6',
+  'White':'#FFFFFF','Black':'#000000','Charcoal':'#1F2937','Slate':'#64748B','Silver':'#CBD5E1','Cream':'#FEF3C7','Sand':'#E7D8C3','Brown':'#7C4A2D','Navy':'#1E3A8A',
+  'Red':'#EF4444','Orange':'#F97316','Amber':'#F59E0B','Yellow':'#FACC15','Green':'#22C55E','Emerald':'#059669','Sky':'#0EA5E9',
+  'Blue':'#2563EB','Indigo':'#4F46E5','Purple':'#9333EA','Magenta':'#C026D3','Pink':'#EC4899','Rose':'#FDA4AF','Mint':'#A7F3D0'};
+const DIMS = [1800, 1200];   // PNG size at 1×. The stage is 3 : 2.
+// A string starts a group. A sample is [name, text, size, weight, line height %, ramp].
+// With ramp set, each line gets its own weight, from Light on the first line to ExtraBold on the last.
+// Samples never change the letter spacing. They do set the colours: see LOOKS.
+const SAMPLES = [
+  'Basedrive',
+  ['Hero headline', 'Unify your customers, work and business operations on one base.', 5.4, 600, 110],
+  ['Big number', '1,284,907\nrows synced today', 9.5, 600, 100],
+  ['Dashboard', 'Revenue  $48,200\nOrders  1,306\nRefunds  0.8%', 7.5, 500, 125],
+  ['Pricing', 'Pro plan\n$29 / month', 11, 600, 105],
+  'Type tests',
+  ['Pangram', 'The quick brown fox jumps over the lazy dog', 10, 500, 100],
+  ['All six weights', 'Light\nRegular\nMedium\nSemiBold\nBold\nExtraBold', 8, 500, 100, true],
+  ['Alphabet', 'ABCDEFGHIJKLMNOPQRS\nTUVWXYZabcdefghijkl\nmnopqrstuvwxyz\n0123456789', 6.4, 500, 115],
+  ['Numbers', '0123456789\n$1,284,907.50  +12.4%', 8, 500, 115],
+  ['Accents', 'Ærø, Łódź, Zürich,\nSão Paulo, Nîmes', 9, 500, 105],
+  'Other industries',
+  ['News headline', 'City approves new tram line after ten-year debate', 8.5, 700, 100],
+  ['Fitness poster', 'MOVE MORE\nSIT LESS', 13.5, 800, 90],
+  ['Café menu', 'Flat white  4.20\nOat latte  4.80\nCold brew  4.50', 8, 400, 125],
+  ['Airport board', 'Lisbon to Oslo\nGate B12 · Boarding 09:30', 7, 600, 120],
+  ['Bank alert', 'You paid £48.20 at Green Grocer\nBalance £1,306.15', 5, 500, 125],
+  ['Clinic appointment', 'Your appointment\nThu 12 Nov, 09:30\nDr. Amara Okafor', 7.5, 500, 115],
+  ['Property listing', '3 bed · 2 bath · 128 m²\n$640,000', 8, 600, 115],
+  ['Concert listing', 'Live at the Harbour Hall\nSat 21 Nov · Doors 19:00', 6.5, 600, 120],
+  ['Weather', '18°\nPartly cloudy, light wind', 7, 300, 105],
+  ['Online course', 'Lesson 4: Fractions\n12 of 20 complete', 7, 500, 120],
+  ['Customer quote', '“We cut our reporting time from days to minutes.”\n— Maya, Head of Operations', 6.5, 300, 115],
+  ['Museum navigation', 'Exhibitions    Visit    Shop    Membership    Donate', 3.2, 500, 120],
+  ['Shop buttons', 'Add to cart     Buy now     Save for later', 4.2, 600, 120],
+  ['Rail app error', 'No trains found.\nTry a different date or station.', 4.6, 500, 125],
+  ['Recipe paragraph', 'Warm the oil in a wide pan and soften the onions for ten minutes. Add the garlic, tomatoes and a pinch of salt, then simmer until thick. Stir through the basil just before serving, and keep a little pasta water back to loosen the sauce.', 3, 400, 140],
+  ['Insurance small print', 'Cover starts on the date shown in your schedule. Claims must be reported within 30 days. An excess of $250 applies to each claim. See the policy wording for full terms and exclusions.', 2.1, 400, 145],
+];
+// [background, text] for each sample outside the Basedrive group. Basedrive samples use the brand teal and white.
+const LOOKS = {
+  'Pangram':['#F8F8F6','#000000'], 'All six weights':['#001A1F','#CBEF63'], 'Alphabet':['#FFFFFF','#1F2937'], 'Numbers':['#1F2937','#FACC15'],
+  'Accents':['#FEF3C7','#7C4A2D'], 'News headline':['#FFFFFF','#000000'], 'Fitness poster':['#F97316','#000000'], 'Café menu':['#E7D8C3','#5B3420'],
+  'Airport board':['#000000','#FACC15'], 'Bank alert':['#1E3A8A','#FFFFFF'], 'Clinic appointment':['#A7F3D0','#064E3B'],
+  'Property listing':['#1F2937','#FEF3C7'], 'Concert listing':['#9333EA','#FFFFFF'], 'Weather':['#0EA5E9','#0B1B3A'], 'Online course':['#4F46E5','#FFFFFF'],
+  'Customer quote':['#FDA4AF','#4C0519'], 'Museum navigation':['#CBD5E1','#1F2937'], 'Shop buttons':['#A21CAF','#FFFFFF'], 'Rail app error':['#B91C1C','#FFFFFF'],
+  'Recipe paragraph':['#FEF3C7','#1F2937'], 'Insurance small print':['#FFFFFF','#334155'],
+};
+const WEIGHTS = {300:'Light',400:'Regular',500:'Medium',600:'SemiBold',700:'Bold',800:'ExtraBold'};
+const $ = id => document.getElementById(id), root = document.documentElement, stage = $('stage'), text = $('text'), foot = $('foot');
+const DEFAULTS = {wght:'500', size:'5.4', track:'-2', lh:'110', pad:'6', align:'left', valign:'center', bg:'#025F6B', fg:'#FFFFFF',
+  logo:false, foot:false, ramp:false, text:'Unify your customers, work and business operations on one base.', footText:foot.textContent, scale:'1', transparent:false};
+const state = {...DEFAULTS};
+try {
+  const saved = JSON.parse(localStorage.getItem('bff-editor-4') || '{}');
+  for (const k of Object.keys(DEFAULTS)) if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) state[k] = saved[k];
+  for (const k of ['bg','fg']) if (!/^#[0-9a-f]{6}$/i.test(state[k])) state[k] = DEFAULTS[k];
+} catch (e) {}
+const save = () => { try { localStorage.setItem('bff-editor-4', JSON.stringify(state)); } catch (e) {} };
+const dims = () => DIMS;
+
+function flash(msg, ok = true) { const s = $('status'); s.textContent = msg; s.style.color = ok ? '#2096A7' : '#F76D57'; }
+
+// WCAG contrast ratio between two #rrggbb colours
+function contrast(a, b) {
+  const lum = h => { const [r, g, bl] = [1, 3, 5].map(i => { const c = parseInt(h.substr(i, 2), 16) / 255; return c <= .03928 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; });
+    return .2126 * r + .7152 * g + .0722 * bl; };
+  const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+  return (x + .05) / (y + .05);
+}
+
+// Put state.text on the stage. With the ramp on, each line is its own block with its own weight.
+function setText() {
+  if (!state.ramp) { text.textContent = state.text; return; }
+  const ls = state.text.split('\n').filter(l => l.trim());
+  text.replaceChildren(...ls.map((l, i) => { const d = document.createElement('div');
+    d.style.fontWeight = ls.length > 1 ? Math.round(300 + 500 * i / (ls.length - 1)) : state.wght; d.textContent = l; return d; }));
+}
+
+function apply() {
+  const [W, H] = dims();
+  root.style.setProperty('--ar', W / H);
+  for (const k of ['wght','size','track','lh','pad','align','valign','bg','fg']) root.style.setProperty('--' + k, state[k]);
+  for (const k of ['wght','size','track','lh','pad']) { $(k).value = state[k]; $('o-' + k).textContent = state[k]; }
+  if (WEIGHTS[state.wght]) $('o-wght').textContent = state.wght + ' ' + WEIGHTS[state.wght];
+  for (const b of $('named').children) b.classList.toggle('on', b.dataset.v === state.wght);
+  for (const b of $('samples').querySelectorAll('button')) b.classList.toggle('on', b.dataset.text === state.text);
+  for (const g of ['align','valign','scale']) for (const b of $(g).children) b.classList.toggle('on', b.dataset.v === state[g]);
+  for (const k of ['bg','fg']) {
+    for (const b of $(k).querySelectorAll('button')) b.classList.toggle('on', b.dataset.v.toLowerCase() === state[k].toLowerCase());
+    $(k).querySelector('input[type=color]').value = state[k].toLowerCase();
+    const hx = $(k).querySelector('.hex'); if (document.activeElement !== hx) { hx.value = state[k].toUpperCase(); hx.classList.remove('bad'); }
+  }
+  const c = contrast(state.bg, state.fg);
+  $('contrast').textContent = 'contrast ' + c.toFixed(1) + ':1 ' + (c >= 7 ? 'AAA' : c >= 4.5 ? 'AA' : c >= 3 ? 'AA large only' : 'too low');
+  $('contrast').style.color = c >= 4.5 ? '#dfe5e5' : c >= 3 ? '#F7B657' : '#F76D57';
+  $('t-ramp').classList.toggle('on', state.ramp);
+  $('logo').hidden = !state.logo; $('t-logo').classList.toggle('on', state.logo);
+  foot.hidden = !state.foot; $('t-foot').classList.toggle('on', state.foot);
+  $('transparent').checked = state.transparent;
+  const s = Number(state.scale);
+  $('dl').textContent = `Download PNG · ${W * s}×${H * s}`;
+  save();
+  requestAnimationFrame(checkFit);
+}
+
+// Warn when the text runs past the edges of the image, where it would be cut off.
+function checkFit() {
+  const s = stage.getBoundingClientRect(), t = text.getBoundingClientRect();
+  const clipped = t.top < s.top - 1 || t.bottom > s.bottom + 1 || text.scrollWidth > text.clientWidth + 1;
+  $('warn').hidden = !clipped;
+  $('warn').textContent = clipped ? 'The text is cut off at the edges. Make it smaller or shorter.' : '';
+}
+
+// ---- controls ----
+for (const smp of SAMPLES) {
+  if (typeof smp === 'string') { const h = document.createElement('h2'); h.textContent = smp; $('samples').append(h); continue; }
+  const [name, txt, size, wght, lh, ramp = false] = smp;
+  const b = document.createElement('button'); b.dataset.text = txt;
+  b.innerHTML = `${name}<small>${ramp ? 'Light to ExtraBold' : WEIGHTS[wght]} · size ${size}</small>`;
+  const [bg, fg] = LOOKS[name] || ['#025F6B', '#FFFFFF'];
+  b.addEventListener('click', () => { Object.assign(state, {text: txt, size: String(size), wght: String(wght), lh: String(lh), ramp, bg, fg}); setText(); apply(); });
+  $('samples').append(b);
+}
+for (const [w, n] of Object.entries(WEIGHTS)) { const b = document.createElement('button'); b.dataset.v = w; b.textContent = w; b.title = n; $('named').append(b); }
+$('named').style.gap = '4px';
+$('named').addEventListener('click', e => { if (e.target.dataset.v) { state.wght = e.target.dataset.v; state.ramp = false; setText(); apply(); } });
+for (const k of ['wght','size','track','lh','pad']) {
+  $(k).addEventListener('input', e => { state[k] = e.target.value; if (k === 'wght' && state.ramp) { state.ramp = false; setText(); } apply(); });
+  $(k).addEventListener('dblclick', () => { state[k] = DEFAULTS[k]; apply(); });
+}
+for (const g of ['align','valign','scale']) $(g).addEventListener('click', e => { if (e.target.dataset.v) { state[g] = e.target.dataset.v; apply(); } });
+$('t-ramp').addEventListener('click', () => { state.ramp = !state.ramp; setText(); apply(); });
+// Compare with the original Funnel Display. The text, layout and export stay the same; only the font changes.
+$('t-orig').addEventListener('click', async () => {
+  const on = !stage.classList.contains('orig');
+  if (on) {
+    flash('Loading the original Funnel Display…');
+    const ok = await document.fonts.load('500 40px FD').then(l => l.length > 0, () => false);
+    if (!ok) return flash('Could not load the original Funnel Display. Check your internet connection.', false);
+  }
+  stage.classList.toggle('orig', on);
+  $('t-orig').classList.toggle('on', on);
+  $('t-orig').textContent = on ? 'Showing the original. Click to switch back' : 'Compare: show original Funnel Display';
+  flash(on ? 'Showing the original Funnel Display 1.001.' : 'Showing Basedrive Funnel Flow.');
+  checkFit();
+});
+$('t-logo').addEventListener('click', () => { state.logo = !state.logo; apply(); });
+$('t-foot').addEventListener('click', () => { state.foot = !state.foot; apply(); });
+$('transparent').addEventListener('change', e => { state.transparent = e.target.checked; apply(); });
+$('swap').addEventListener('click', () => { [state.bg, state.fg] = [state.fg, state.bg]; apply(); });
+$('reset').addEventListener('click', () => {
+  if (!confirm('Reset all settings and text to the defaults?')) return;
+  Object.assign(state, DEFAULTS); setText(); foot.textContent = state.footText; apply(); flash('Reset to the defaults.');
+});
+for (const k of ['bg','fg']) {
+  for (const [name, hex] of Object.entries(PALETTE)) {
+    const b = document.createElement('button'); b.title = name + ' ' + hex; b.setAttribute('aria-label', name); b.dataset.v = hex; b.style.background = hex;
+    b.addEventListener('click', () => { state[k] = hex; apply(); }); $(k).append(b);
+    if (name === 'Paper') { const br = document.createElement('i'); br.style.flexBasis = '100%'; $(k).append(br); }   // end of the brand row
+  }
+  // Custom colour: the browser's full picker, and a hex field for typing or pasting a value.
+  const row = document.createElement('div'); row.className = 'custom';
+  const c = document.createElement('input'); c.type = 'color'; c.title = 'Open the full colour picker'; c.setAttribute('aria-label', 'Full colour picker');
+  c.addEventListener('input', () => { state[k] = c.value; apply(); });
+  const h = document.createElement('input'); h.type = 'text'; h.className = 'hex'; h.maxLength = 7; h.spellcheck = false; h.placeholder = '#RRGGBB'; h.setAttribute('aria-label', 'Hex colour');
+  h.addEventListener('input', () => {
+    let v = h.value.trim().replace(/^#?/, '#');
+    if (/^#[0-9a-f]{3}$/i.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join('');
+    const ok = /^#[0-9a-f]{6}$/i.test(v); h.classList.toggle('bad', !ok);
+    if (ok) { state[k] = v; apply(); }
+  });
+  h.addEventListener('blur', apply);
+  row.append(c, h); $(k).append(row);
+}
+for (const el of [text, foot]) {
+  try { el.contentEditable = 'plaintext-only'; } catch (e) {}
+  if (el.contentEditable !== 'plaintext-only') {
+    el.contentEditable = 'true';
+    el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); });
+  }
+}
+setText(); foot.textContent = state.footText;
+text.addEventListener('input', () => { state.text = text.innerText.replace(/\n$/, ''); apply(); });
+foot.addEventListener('input', () => { state.footText = foot.innerText.trim(); save(); });
+addEventListener('resize', () => requestAnimationFrame(checkFit));
+
+// ---- export ----
+// The PNG is drawn on a canvas from the live layout: the browser's own line breaks and positions are read from the
+// page and scaled up, so the image matches the preview exactly, at full pixel size.
+function textLines(el) {
+  const lines = [], range = document.createRange(), walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  let cur = null, node;
+  while ((node = walk.nextNode())) {
+    for (let i = 0; i < node.length;) {
+      const len = node.data.codePointAt(i) > 0xffff ? 2 : 1, ch = node.data.substr(i, len);
+      range.setStart(node, i); range.setEnd(node, i + len); i += len;
+      if (ch === '\n') continue;
+      const rects = range.getClientRects(); if (!rects.length) continue;
+      const r = rects[rects.length - 1];
+      if (!cur || Math.abs(r.top - cur.top) > 1) lines.push(cur = {top: r.top, left: r.left, height: r.height, str: '', el: node.parentElement});
+      cur.str += ch;
+    }
+  }
+  return lines;
+}
+
+function drawText(ctx, el, origin, k) {
+  const cs = getComputedStyle(el), size = parseFloat(cs.fontSize), ls = (parseFloat(cs.letterSpacing) || 0) * k;
+  ctx.save();
+  ctx.globalAlpha = parseFloat(getComputedStyle(el.closest('#foot,#logo,#text')).opacity) || 1;
+  ctx.fillStyle = cs.color;
+  ctx.font = `${cs.fontWeight} ${size * k}px ${cs.fontFamily}`;
+  ctx.textBaseline = 'alphabetic';
+  const ascent = ctx.measureText('Hg').fontBoundingBoxAscent;
+  const native = 'letterSpacing' in ctx;
+  if (native) ctx.letterSpacing = ls + 'px';
+  for (const line of textLines(el)) {
+    ctx.font = `${getComputedStyle(line.el).fontWeight} ${size * k}px ${cs.fontFamily}`;
+    const x = (line.left - origin.left) * k, y = (line.top - origin.top) * k + (ascent ?? line.height * k * .8);
+    if (native || !ls) { ctx.fillText(line.str, x, y); continue; }
+    const chars = Array.from(line.str);   // older browsers: place each character, keeping kerning from the prefix width
+    chars.forEach((c, i) => ctx.fillText(c, x + ctx.measureText(chars.slice(0, i).join('')).width + i * ls, y));
+  }
+  ctx.restore();
+}
+
+async function render() {
+  await document.fonts.load(`${state.wght} 40px BFF`); await document.fonts.ready;
+  const [W0, H0] = dims(), s = Number(state.scale), W = W0 * s, H = H0 * s;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d'), origin = stage.getBoundingClientRect(), k = W / origin.width;
+  if (!state.transparent) { ctx.fillStyle = state.bg; ctx.fillRect(0, 0, W, H); }
+  if (state.logo) {
+    const svg = $('logo').querySelector('svg'), r = svg.getBoundingClientRect(), sc = r.height * k / 57.2;
+    ctx.save(); ctx.translate((r.left - origin.left) * k, (r.top - origin.top) * k); ctx.scale(sc, sc);
+    ctx.fillStyle = getComputedStyle(svg).color; ctx.fill(new Path2D(svg.querySelector('path').getAttribute('d')), 'evenodd'); ctx.restore();
+    drawText(ctx, $('logo').querySelector('span'), origin, k);
+  }
+  drawText(ctx, text, origin, k);
+  if (state.foot) drawText(ctx, foot, origin, k);
+  return cv;
+}
+const toBlob = cv => new Promise((ok, no) => cv.toBlob(b => b ? ok(b) : no(new Error('PNG encoding failed')), 'image/png'));
+const fileName = () => {
+  const slug = (state.text.split('\n')[0] || 'text').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 32) || 'text';
+  const [W, H] = dims(), s = Number(state.scale);
+  return `${stage.classList.contains('orig') ? 'funnel-display-original' : 'basedrive-funnel-flow'}-${slug}-${W * s}x${H * s}.png`;
+};
+
+async function download() {
+  try {
+    const url = URL.createObjectURL(await toBlob(await render()));
+    const a = Object.assign(document.createElement('a'), {href: url, download: fileName()});
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+    flash('Downloaded ' + a.download);
+  } catch (e) { flash('Could not make the PNG: ' + e.message, false); }
+}
+$('dl').addEventListener('click', download);
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); download(); } });
+
+$('copy-img').addEventListener('click', async () => {
+  if (!navigator.clipboard?.write || !window.ClipboardItem) return flash('This browser cannot copy images. Use Download PNG.', false);
+  try { await navigator.clipboard.write([new ClipboardItem({'image/png': render().then(toBlob)})]); flash('Image copied. Paste it anywhere.'); }
+  catch (e) { flash('Could not copy the image: ' + e.message, false); }
+});
+
+$('copy-css').addEventListener('click', async () => {
+  const [W] = dims();
+  const css = `@font-face {
+  font-family: "Basedrive Funnel Flow";
+  src: url("webfonts/BasedriveFunnelFlow[wght].woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+}
+
+.headline {
+  font-family: "Basedrive Funnel Flow", sans-serif;
+  font-weight: ${state.wght};
+  font-size: ${Math.round(state.size / 100 * W)}px; /* ${state.size}% of a ${W}px-wide frame */
+  letter-spacing: ${(state.track / 100).toFixed(3).replace(/\.?0+$/, '') || 0}em;
+  line-height: ${state.lh / 100};
+  text-align: ${state.align};
+  color: ${state.fg};
+  background: ${state.bg};
+}`;
+  try { await navigator.clipboard.writeText(css); flash('CSS copied.'); }
+  catch (e) { flash('Could not copy the CSS: ' + e.message, false); }
+});
+
+document.fonts.load('500 40px BFF').then(l => {
+  flash(l.length ? 'Font loaded from webfonts/.' : 'Font did not load. Keep this file next to the webfonts/ and variable/ folders.', !!l.length);
+  checkFit();
+}, () => flash('Font did not load.', false));
+apply();
+</script>

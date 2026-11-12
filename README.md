@@ -1,5 +1,42 @@
 # Basedrive Funnel Flow
 
+From: [basedrive.ai](https://basedrive.ai)
+
+![The Basedrive wordmark set in Basedrive Funnel Flow](artwork/basedrive-wordmark.png)
+
+> **Note:** This font has not been thoroughly tested yet, so expect minor changes. Non-English
+> characters (accented letters and other characters outside basic English) are not yet fully tested.
+
+## Before and after
+
+| Before: Funnel Display | After: Basedrive Funnel Flow |
+| --- | --- |
+| ![A pangram set in the original Funnel Display](artwork/funnel-display-original-the-quick-brown-fox-jumps-over-t-3600x2400.png) | ![The same pangram set in Basedrive Funnel Flow](artwork/basedrive-funnel-flow-the-quick-brown-fox-jumps-over-t-3600x2400.png) |
+
+Funnel Display has a small block that steps out from the stem of some letters, with a square
+notch beside it. In Basedrive Funnel Flow that notch becomes a deeper, round-ended cut, and a
+curve flows from it back into the letter. Look at the q, u, b, r, n, m, p, a, d and g above.
+
+- **Twelve letters change:** `a b d g m n ŋ p q r u ª`, plus their accented forms.
+- **Nothing else changes:** every other glyph, the spacing and the kerning are the same, so text
+  takes exactly the space it takes in Funnel Display.
+
+## In use
+
+| | |
+| --- | --- |
+| ![Basedrive headline: Unify your customers, work and business operations on one base](artwork/basedrive-funnel-flow-unify-your-customers-work-and-bu-3600x2400.png) | ![Big number: 1,284,907 rows synced today](artwork/basedrive-funnel-flow-1-284-907-3600x2400.png) |
+| ![Dashboard figures for revenue, orders and refunds](artwork/basedrive-funnel-flow-revenue-48-200-3600x2400.png) | ![All six weights, from Light to ExtraBold](artwork/basedrive-funnel-flow-light-3600x2400.png) |
+| ![The alphabet in capitals and lowercase, with numerals](artwork/basedrive-funnel-flow-abcdefghijklmnopqrs-3600x2400.png) | ![Numerals, currency and percentages](artwork/basedrive-funnel-flow-0123456789-3600x2400.png) |
+| ![A news headline](artwork/basedrive-funnel-flow-city-approves-new-tram-line-afte-3600x2400.png) | ![A café menu with prices](artwork/basedrive-funnel-flow-flat-white-4-20-3600x2400.png) |
+| ![A bank payment alert](artwork/basedrive-funnel-flow-you-paid-48-20-at-green-grocer-3600x2400.png) | ![A weather reading](artwork/basedrive-funnel-flow-18-3600x2400.png) |
+| ![An error message from a rail app](artwork/basedrive-funnel-flow-no-trains-found-3600x2400.png) | ![A paragraph from a recipe](artwork/basedrive-funnel-flow-warm-the-oil-in-a-wide-pan-and-s-3600x2400.png) |
+| ![Insurance small print](artwork/basedrive-funnel-flow-cover-starts-on-the-date-shown-i-3600x2400.png) | |
+
+These images were made with the [editor](editor.html) in this repository.
+
+## Release
+
 Release candidate 2 (flip rules), 12 November 2026. This replaces the candidate of the same name
 made earlier that day, in which each letter's wedge was fitted to the letter separately.
 
@@ -35,6 +72,12 @@ anything critical.
 | [`webfonts/`](webfonts/) | WOFF2 versions of the variable font and of each static TrueType file |
 | [`sources/`](sources/) | `BasedriveFunnelFlow.glyphs` (the patched Glyphs source) and `config_display.yaml` (the build recipe) |
 | [`build-record/`](build-record/) | The scripts as they were run, and the exact tool versions |
+
+## Try it in the browser
+
+[Open the editor](https://basedrive-ai.github.io/basedrive-funnel-flow/editor.html) to type your own text, change the
+weight, size and colours, load sample texts, and download the result as a PNG. The same page is
+[`editor.html`](editor.html) in this repository; it also works when opened from a local copy of the repo.
 
 ## Use on the web
 

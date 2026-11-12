@@ -44,6 +44,7 @@ main{display:grid;place-items:center;padding:28px;min-width:0;overflow:hidden}
 #text{font-family:"BFF",sans-serif;font-weight:var(--wght);font-size:calc(var(--size) * 1cqw);letter-spacing:calc(var(--track) * .01em);line-height:calc(var(--lh) * .01);padding:0 calc(var(--pad) * 1cqw);text-align:var(--align);outline:none;white-space:pre-wrap;overflow-wrap:break-word}
 #logo{position:absolute;left:calc(var(--pad) * 1cqw);top:calc(var(--pad) * .75cqw);height:3.4cqw;display:flex;align-items:baseline;gap:1.05cqw;font-family:"BFF",sans-serif;font-weight:500;font-size:4.2cqw;line-height:1;letter-spacing:-.03em}
 #logo svg{height:3.4cqw;align-self:flex-end;flex:none}
+#text div{letter-spacing:calc(var(--track) * .01em)}
 #sub{font-family:"BFF",sans-serif;font-weight:300;font-size:calc(var(--size) * .98cqw);letter-spacing:calc(var(--track) * .01em);line-height:calc(var(--lh) * .01);margin-top:calc(var(--size) * .55cqw);padding:0 calc(var(--pad) * 1cqw);text-align:var(--align);outline:none;white-space:pre-wrap;overflow-wrap:break-word}
 #foot{position:absolute;left:calc(var(--pad) * 1cqw);right:calc(var(--pad) * 1cqw);bottom:calc(var(--pad) * .75cqw);font-family:"BFF",sans-serif;font-weight:400;font-size:1.5cqw;opacity:.75;outline:none}
 #samples{border-right:0;border-left:1px solid #2a3133}
@@ -113,7 +114,9 @@ const PALETTE = {'Lagoon teal':'#025F6B','Night teal':'#001A1F','Lagoon bright':
   'Blue':'#2563EB','Indigo':'#4F46E5','Purple':'#9333EA','Magenta':'#C026D3','Pink':'#EC4899','Rose':'#FDA4AF','Mint':'#A7F3D0'};
 const DIMS = [1800, 1200];   // PNG size at 1×. The stage is 3 : 2.
 // A string starts a group. A sample is [name, text, size, weight, line height %, ramp, second line].
-// With ramp set, each line gets its own weight, from Light on the first line to ExtraBold on the last.
+// With ramp set, each line gets its own weight, from Light on the first line to ExtraBold on the last;
+// with ramp 'down', from ExtraBold on the first line to Light on the last, from full size down to half, and with the letter spacing
+// opening by up to 3 points (percent of the size) on the smallest line, on top of the slider's value.
 // Samples never change the letter spacing. They do set the colours: see LOOKS.
 const SAMPLES = [
   'Basedrive',
@@ -122,7 +125,7 @@ const SAMPLES = [
   ['Dashboard', 'Revenue  $48,200\nOrders  1,306\nRefunds  0.8%', 7.5, 500, 125],
   ['Pricing', 'Pro plan\n$29 / month', 11, 600, 105],
   'Type tests',
-  ['Pangram', 'The quick brown fox jumps over the lazy dog', 10, 500, 100],
+  ['Pangram, all weights', 'The quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog', 4.2, 500, 135, 'down'],
   ['All six weights', 'Light\nRegular\nMedium\nSemiBold\nBold\nExtraBold', 8, 500, 100, true],
   ['Alphabet', 'ABCDEFGHIJKLMNOPQRS\nTUVWXYZabcdefghijkl\nmnopqrstuvwxyz\n0123456789', 6.4, 500, 115],
   ['Numbers', '0123456789\n$1,284,907.50  +12.4%', 8, 500, 115],
@@ -147,7 +150,7 @@ const SAMPLES = [
 ];
 // [background, text] for each sample outside the Basedrive group. Basedrive samples use the brand teal and white.
 const LOOKS = {
-  'Pangram':['#F8F8F6','#000000'], 'All six weights':['#001A1F','#CBEF63'], 'Alphabet':['#FFFFFF','#1F2937'], 'Numbers':['#1F2937','#FACC15'],
+  'Pangram, all weights':['#F8F8F6','#000000'], 'All six weights':['#001A1F','#CBEF63'], 'Alphabet':['#FFFFFF','#1F2937'], 'Numbers':['#1F2937','#FACC15'],
   'Accents':['#FEF3C7','#7C4A2D'], 'News headline':['#FFFFFF','#000000'], 'Fitness poster':['#F97316','#000000'], 'Café menu':['#E7D8C3','#5B3420'],
   'Airport board':['#000000','#FACC15'], 'Bank alert':['#1E3A8A','#FFFFFF'], 'Clinic appointment':['#A7F3D0','#064E3B'],
   'Property listing':['#1F2937','#FEF3C7'], 'Concert listing':['#9333EA','#FFFFFF'], 'Weather':['#0EA5E9','#0B1B3A'], 'Online course':['#4F46E5','#FFFFFF'],
@@ -157,7 +160,7 @@ const LOOKS = {
 const WEIGHTS = {300:'Light',400:'Regular',500:'Medium',600:'SemiBold',700:'Bold',800:'ExtraBold'};
 const $ = id => document.getElementById(id), root = document.documentElement, stage = $('stage'), text = $('text'), foot = $('foot'), sub = $('sub');
 const DEFAULTS = {wght:'500', size:'5.4', track:'-2', lh:'110', pad:'6', align:'left', valign:'center', bg:'#025F6B', fg:'#FFFFFF',
-  logo:false, foot:false, ramp:false, text:'Unify your customers, work and business operations on one base.', footText:foot.textContent, sub:true, subText:sub.textContent, scale:'1', transparent:false};
+  logo:false, foot:false, ramp:false, rampDown:false, text:'Unify your customers, work and business operations on one base.', footText:foot.textContent, sub:true, subText:sub.textContent, scale:'1', transparent:false};
 const state = {...DEFAULTS};
 try {
   const saved = JSON.parse(localStorage.getItem('bff-editor-5') || '{}');
@@ -182,7 +185,12 @@ function setText() {
   if (!state.ramp) { text.textContent = state.text; return; }
   const ls = state.text.split('\n').filter(l => l.trim());
   text.replaceChildren(...ls.map((l, i) => { const d = document.createElement('div');
-    d.style.fontWeight = ls.length > 1 ? Math.round(300 + 500 * i / (ls.length - 1)) : state.wght; d.textContent = l; return d; }));
+    d.style.fontWeight = ls.length > 1 ? Math.round(300 + 500 * (state.rampDown ? ls.length - 1 - i : i) / (ls.length - 1)) : state.wght;
+    if (state.rampDown && ls.length > 1) {   // and from full size down to half, opening the letter spacing as the lines get smaller
+      d.style.fontSize = (1 - .5 * i / (ls.length - 1)) + 'em';
+      d.style.letterSpacing = `calc((var(--track) + ${(3 * i / (ls.length - 1)).toFixed(2)}) * .01em)`;
+    }
+    d.textContent = l; return d; }));
 }
 
 function apply() {
@@ -227,9 +235,9 @@ for (const smp of SAMPLES) {
   if (typeof smp === 'string') { const h = document.createElement('h2'); h.textContent = smp; $('samples').append(h); continue; }
   const [name, txt, size, wght, lh, ramp = false, second = ''] = smp;
   const b = document.createElement('button'); b.dataset.text = txt;
-  b.innerHTML = `${name}<small>${ramp ? 'Light to ExtraBold' : WEIGHTS[wght]} · size ${size}</small>`;
+  b.innerHTML = `${name}<small>${ramp === 'down' ? 'ExtraBold to Light, large to small' : ramp ? 'Light to ExtraBold' : WEIGHTS[wght]} · size ${size}</small>`;
   const [bg, fg] = LOOKS[name] || ['#025F6B', '#FFFFFF'];
-  b.addEventListener('click', () => { Object.assign(state, {text: txt, size: String(size), wght: String(wght), lh: String(lh), ramp, bg, fg, sub: !!second}); if (second) { state.subText = second; sub.textContent = second; } setText(); apply(); });
+  b.addEventListener('click', () => { Object.assign(state, {text: txt, size: String(size), wght: String(wght), lh: String(lh), ramp: !!ramp, rampDown: ramp === 'down', bg, fg, sub: !!second}); if (second) { state.subText = second; sub.textContent = second; } setText(); apply(); });
   $('samples').append(b);
 }
 for (const [w, n] of Object.entries(WEIGHTS)) { const b = document.createElement('button'); b.dataset.v = w; b.textContent = w; b.title = n; $('named').append(b); }
@@ -240,7 +248,7 @@ for (const k of ['wght','size','track','lh','pad']) {
   $(k).addEventListener('dblclick', () => { state[k] = DEFAULTS[k]; apply(); });
 }
 for (const g of ['align','valign','scale']) $(g).addEventListener('click', e => { if (e.target.dataset.v) { state[g] = e.target.dataset.v; apply(); } });
-$('t-ramp').addEventListener('click', () => { state.ramp = !state.ramp; setText(); apply(); });
+$('t-ramp').addEventListener('click', () => { state.ramp = !state.ramp; state.rampDown = false; setText(); apply(); });
 // Compare with the original Funnel Display. The text, layout and export stay the same; only the font changes.
 $('t-orig').addEventListener('click', async () => {
   const on = !stage.classList.contains('orig');
@@ -318,17 +326,16 @@ function textLines(el) {
 }
 
 function drawText(ctx, el, origin, k) {
-  const cs = getComputedStyle(el), size = parseFloat(cs.fontSize), ls = (parseFloat(cs.letterSpacing) || 0) * k;
+  const cs = getComputedStyle(el), native = 'letterSpacing' in ctx;
   ctx.save();
   ctx.globalAlpha = parseFloat(getComputedStyle(el.closest('#foot,#logo,#text,#sub')).opacity) || 1;
   ctx.fillStyle = cs.color;
-  ctx.font = `${cs.fontWeight} ${size * k}px ${cs.fontFamily}`;
   ctx.textBaseline = 'alphabetic';
-  const ascent = ctx.measureText('Hg').fontBoundingBoxAscent;
-  const native = 'letterSpacing' in ctx;
-  if (native) ctx.letterSpacing = ls + 'px';
-  for (const line of textLines(el)) {
-    ctx.font = `${getComputedStyle(line.el).fontWeight} ${size * k}px ${cs.fontFamily}`;
+  for (const line of textLines(el)) {   // each line can have its own weight and size (the weight ramp)
+    const lc = getComputedStyle(line.el), ls = (parseFloat(lc.letterSpacing) || 0) * k;
+    ctx.font = `${lc.fontWeight} ${parseFloat(lc.fontSize) * k}px ${cs.fontFamily}`;
+    if (native) ctx.letterSpacing = ls + 'px';
+    const ascent = ctx.measureText('Hg').fontBoundingBoxAscent;
     const x = (line.left - origin.left) * k, y = (line.top - origin.top) * k + (ascent ?? line.height * k * .8);
     if (native || !ls) { ctx.fillText(line.str, x, y); continue; }
     const chars = Array.from(line.str);   // older browsers: place each character, keeping kerning from the prefix width

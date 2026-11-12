@@ -23,15 +23,31 @@ curve flows from it back into the letter. Look at the q, u, b, r, n, m, p, a, d 
 
 ## In use
 
-| | |
-| --- | --- |
-| ![Basedrive headline: Unify your customers, work and business operations on one base](artwork/basedrive-funnel-flow-unify-your-customers-work-and-bu-3600x2400.png) | ![Big number: 1,284,907 rows synced today](artwork/basedrive-funnel-flow-1-284-907-3600x2400.png) |
-| ![Dashboard figures for revenue, orders and refunds](artwork/basedrive-funnel-flow-revenue-48-200-3600x2400.png) | ![All six weights, from Light to ExtraBold](artwork/basedrive-funnel-flow-light-3600x2400.png) |
-| ![The alphabet in capitals and lowercase, with numerals](artwork/basedrive-funnel-flow-abcdefghijklmnopqrs-3600x2400.png) | ![Numerals, currency and percentages](artwork/basedrive-funnel-flow-0123456789-3600x2400.png) |
-| ![A news headline](artwork/basedrive-funnel-flow-city-approves-new-tram-line-afte-3600x2400.png) | ![A café menu with prices](artwork/basedrive-funnel-flow-flat-white-4-20-3600x2400.png) |
-| ![A bank payment alert](artwork/basedrive-funnel-flow-you-paid-48-20-at-green-grocer-3600x2400.png) | ![A weather reading](artwork/basedrive-funnel-flow-18-3600x2400.png) |
-| ![An error message from a rail app](artwork/basedrive-funnel-flow-no-trains-found-3600x2400.png) | ![A paragraph from a recipe](artwork/basedrive-funnel-flow-warm-the-oil-in-a-wide-pan-and-s-3600x2400.png) |
-| ![Insurance small print](artwork/basedrive-funnel-flow-cover-starts-on-the-date-shown-i-3600x2400.png) | |
+![Basedrive headline: Unify your customers, work and business operations on one base](artwork/basedrive-funnel-flow-unify-your-customers-work-and-bu-3600x2400.png)
+
+![Big number: 1,284,907 rows synced today](artwork/basedrive-funnel-flow-1-284-907-3600x2400.png)
+
+![Dashboard figures for revenue, orders and refunds](artwork/basedrive-funnel-flow-revenue-48-200-3600x2400.png)
+
+![All six weights, from Light to ExtraBold](artwork/basedrive-funnel-flow-light-3600x2400.png)
+
+![The alphabet in capitals and lowercase, with numerals](artwork/basedrive-funnel-flow-abcdefghijklmnopqrs-3600x2400.png)
+
+![Numerals, currency and percentages](artwork/basedrive-funnel-flow-0123456789-3600x2400.png)
+
+![A news headline](artwork/basedrive-funnel-flow-city-approves-new-tram-line-afte-3600x2400.png)
+
+![A café menu with prices](artwork/basedrive-funnel-flow-flat-white-4-20-3600x2400.png)
+
+![A bank payment alert](artwork/basedrive-funnel-flow-you-paid-48-20-at-green-grocer-3600x2400.png)
+
+![A weather reading](artwork/basedrive-funnel-flow-18-3600x2400.png)
+
+![An error message from a rail app](artwork/basedrive-funnel-flow-no-trains-found-3600x2400.png)
+
+![A paragraph from a recipe](artwork/basedrive-funnel-flow-warm-the-oil-in-a-wide-pan-and-s-3600x2400.png)
+
+![Insurance small print](artwork/basedrive-funnel-flow-cover-starts-on-the-date-shown-i-3600x2400.png)
 
 These images were made with the [editor](editor.html) in this repository.
 

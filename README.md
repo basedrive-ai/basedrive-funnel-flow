@@ -9,13 +9,17 @@ From: [basedrive.ai](https://basedrive.ai)
 
 ## Before and after
 
-| Before: Funnel Display | After: Basedrive Funnel Flow |
-| --- | --- |
-| ![A pangram set in the original Funnel Display](artwork/funnel-display-original-the-quick-brown-fox-jumps-over-t-3600x2400.png) | ![The same pangram set in Basedrive Funnel Flow](artwork/basedrive-funnel-flow-the-quick-brown-fox-jumps-over-t-3600x2400.png) |
+**Before: Funnel Display**
+
+![A pangram set in the original Funnel Display](artwork/funnel-display-original-the-quick-brown-fox-jumps-over-t-3600x2400.png)
+
+**After: Basedrive Funnel Flow**
+
+![The same pangram set in Basedrive Funnel Flow](artwork/basedrive-funnel-flow-the-quick-brown-fox-jumps-over-t-3600x2400.png)
 
 Funnel Display has a small block that steps out from the stem of some letters, with a square
 notch beside it. In Basedrive Funnel Flow that notch becomes a deeper, round-ended cut, and a
-curve flows from it back into the letter. Look at the q, u, b, r, n, m, p, a, d and g above.
+curve flows from it back into the letter. Look at the q, u, b, r, n, m, p, a, d and g in the two images above.
 
 - **Twelve letters change:** `a b d g m n ŋ p q r u ª`, plus their accented forms.
 - **Nothing else changes:** every other glyph, the spacing and the kerning are the same, so text
